@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post } from '@nestjs/common';
 import { CreateTaskDto } from './dto/CreateTask.dto';
-import { TaskService } from './task.service';
-import { Task } from './Schemas/task.schema';
+import { TaskService } from '../Task/Task.service';
+import { Task } from '../Task/Schemas/Task.schema';
 
 @Controller('tasks')
 export class TaskController {

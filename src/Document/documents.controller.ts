@@ -15,8 +15,8 @@ import {
   HttpException,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateDocumentDto } from './dto/CreateDocument.dto';
-import { UpdateDocumentDto } from './dto/updateDocument.dto';
+import { CreateDocumentDto } from '../Document/dto/CreateDocument.dto';
+import { UpdateDocumentDto } from '../Document/dto/UpdateDocument.dto';
 import { DocumentService } from './documents.service';
 import { Response } from 'express';
 import { Document } from './Schemas/Document.schemas';

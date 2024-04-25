@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { CreateDocumentDto } from './dto/createDocument.dto';
-import { UpdateDocumentDto } from './dto/updateDocument.dto';
+import { CreateDocumentDto } from '../Document/dto/CreateDocument.dto';
+import { UpdateDocumentDto } from '../Document/dto/UpdateDocument.dto';
 import { Document, DocumentVersion } from './Schemas/Document.schemas';
 import { EditorService } from '../editor/editor.service';
 import { Workspace } from '../workspace/workspace.schema';
@@ -19,32 +19,7 @@ export class DocumentService {
     @InjectModel(Workspace.name) private readonly workspaceModel: Model<Workspace>,
     private readonly emailService: EmailService,
   ) {
-    // this.transporter = nodemailer.createTransport({
-    //   service: 'gmail',
-    //   auth: {
-    //     user: 'docsharepeak@gmail.com',
-    //     pass: 'idfn awit axno nbae',
-    //   },
-    // });
-  }
-
-  // async sendEmail(userEmail: string, documentName: string, documentId: Types.ObjectId) {
-  //   const documentLink = this.generateDocumentLink(documentId.toString());
-
-  //   const mailOptions = {
-  //     from: 'docsharepeak@gmail.com',
-  //     to: userEmail,
-  //     subject: 'Document Créé avec Succès',
-  //     text: `Monsieur/Madame,\n\nVotre document "${documentName}" a été créé avec succès.\n\nVous pouvez consulter votre document ici : ${documentLink}\n\nCordialement,\nVotre Application`,
-  //   };
-
-  //   try {
-  //     const info = await this.transporter.sendMail(mailOptions);
-  //     console.log('Email sent: ' + userEmail);
-  //   } catch (error) {
-  //     console.error('Error sending email:', error);
-  //   }
-  // }
+ 
 
 
   async sendEmail(userEmail: string, documentName: string, documentId: Types.ObjectId) {

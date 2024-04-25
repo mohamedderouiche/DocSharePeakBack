@@ -3,7 +3,7 @@ import { Event } from './event.schemas';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ObjectId } from 'mongodb';
-import { Task } from 'Task/Schemas/task.schema';
+import { Task } from '../Task/Schemas/Task.schema';
 
 @Injectable()
 export class EventsService {
