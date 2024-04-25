@@ -1,9 +1,10 @@
+/* eslint-disable prettier/prettier */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document as MongooseDocument, SchemaTypes, Types } from 'mongoose';
 import { Post } from 'src/editor/post.schema';
 import {  Schema as MongooseSchema } from 'mongoose';
 import { FileImport } from 'src/ImportFiles/file.schemas';
-import { Task } from 'src/Task/Schemas/task.schema';
+import { Task } from '../../Task/Schemas/Task.schema';
 
 export interface DocumentVersion {
   versionNumber: number;
