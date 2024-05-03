@@ -5,6 +5,7 @@ import { Workspace } from '../workspace/workspace.schema';
 import * as bcrypt from 'bcrypt';
 import { WorkspaceDto } from '../auth/dto/workspace.dto';
 import { DocumentService } from '../Document/documents.service';
+import { User } from 'src/users/schemas/user.schema';
 
 
 @Injectable()
@@ -36,6 +37,10 @@ export class WorkspaceService {
         createdWorkspace.createdAt = new Date(); 
         return await createdWorkspace.save();
       }
+
+      // async addAdminRoleToUserForWorkspace(workspace:WorkspaceDto,user:User){
+      
+      // }
     
       async findAll(): Promise<any[]> {
         try {

@@ -7,6 +7,7 @@ import { Document, DocumentSchema } from './Schemas/Document.schemas';
 import { EditorModule } from '../editor/editor.module';
 import { Workspace , WorkspaceSchema} from '../workspace/workspace.schema';
 import { EmailService } from '../Email/email.service';
+import { RealTimeGateway } from 'src/realtimeNotif/realtime.gateway';
 @Module({
   imports: [
     MongooseModule.forFeature([
@@ -19,7 +20,7 @@ import { EmailService } from '../Email/email.service';
     MongooseModule.forFeature([{ name: Workspace.name, schema: WorkspaceSchema }]),
 
   ],
-  providers: [DocumentService,EmailService],
+  providers: [DocumentService,EmailService,RealTimeGateway],
   controllers: [DocumentController],
   exports: [DocumentService],
 })

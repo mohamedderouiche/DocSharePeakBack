@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, SchemaTypes, Types } from 'mongoose';
+import { Event } from 'src/Events/event.schemas';
 
 export type UserDocument = User & Document;
 
@@ -70,6 +71,9 @@ export class User {
 
   @Prop()
   updatedAt: Date;
+
+  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Event' }] })
+   events: Types.Array<Event>;
 }
 
 const UserSchema = SchemaFactory.createForClass(User);

@@ -15,8 +15,8 @@ import {
   HttpException,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateDocumentDto } from '../Document/dto/CreateDocument.dto';
-import { UpdateDocumentDto } from '../Document/dto/UpdateDocument.dto';
+import { CreateDocumentDto } from './dto/CreateDocument.dto';
+import { UpdateDocumentDto } from './dto/updateDocument.dto';
 import { DocumentService } from './documents.service';
 import { Response } from 'express';
 import { Document } from './Schemas/Document.schemas';
@@ -77,6 +77,19 @@ async getDocumentsByWorkspaceName(@Param('workspaceName') workspaceName: string)
     return documents;
   } catch (error) {
     throw new NotFoundException(error.message);
+  }
+}
+@Get('/Search/:documentName')
+async searchDocumentByName(@Param('documentName') documentName: string): Promise<Document[]> {
+  try {
+      const foundDocuments = await this.documentService.findDocumentByName(documentName);
+      return foundDocuments;
+  } catch (error) {
+      if (error instanceof NotFoundException) {
+          console.error(error.message);
+          return [];
+      }
+      throw error;
   }
 }
 

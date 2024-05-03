@@ -1,12 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { CreateDocumentDto } from '../Document/dto/CreateDocument.dto';
-import { UpdateDocumentDto } from '../Document/dto/UpdateDocument.dto';
+import { CreateDocumentDto } from './dto/createDocument.dto';
+import { UpdateDocumentDto } from './dto/updateDocument.dto';
 import { Document, DocumentVersion } from './Schemas/Document.schemas';
 import { EditorService } from '../editor/editor.service';
 import { Workspace } from '../workspace/workspace.schema';
 import { EmailService } from '../Email/email.service';
+import { RealTimeGateway } from 'src/realtimeNotif/realtime.gateway';
 
 @Injectable()
 export class DocumentService {
@@ -18,8 +19,35 @@ export class DocumentService {
     private readonly editorService: EditorService,
     @InjectModel(Workspace.name) private readonly workspaceModel: Model<Workspace>,
     private readonly emailService: EmailService,
+    private readonly realTimeGateway: RealTimeGateway
+
   ) {
- 
+    // this.transporter = nodemailer.createTransport({
+    //   service: 'gmail',
+    //   auth: {
+    //     user: 'docsharepeak@gmail.com',
+    //     pass: 'idfn awit axno nbae',
+    //   },
+    // });
+  }
+
+  // async sendEmail(userEmail: string, documentName: string, documentId: Types.ObjectId) {
+  //   const documentLink = this.generateDocumentLink(documentId.toString());
+
+  //   const mailOptions = {
+  //     from: 'docsharepeak@gmail.com',
+  //     to: userEmail,
+  //     subject: 'Document Créé avec Succès',
+  //     text: `Monsieur/Madame,\n\nVotre document "${documentName}" a été créé avec succès.\n\nVous pouvez consulter votre document ici : ${documentLink}\n\nCordialement,\nVotre Application`,
+  //   };
+
+  //   try {
+  //     const info = await this.transporter.sendMail(mailOptions);
+  //     console.log('Email sent: ' + userEmail);
+  //   } catch (error) {
+  //     console.error('Error sending email:', error);
+  //   }
+  // }
 
 
   async sendEmail(userEmail: string, documentName: string, documentId: Types.ObjectId) {
@@ -80,6 +108,14 @@ export class DocumentService {
       createDocumentDto.name,
       documentId,
     );
+    const payload = {
+      name: createDocumentDto.name,
+      userEmail: createDocumentDto.userEmail,
+    };
+    const clients = this.realTimeGateway.getAllClients();
+    clients.forEach(client => {
+      this.realTimeGateway.handleDocumentCreated(payload);
+    });
   
     return savedDocument;
   }
@@ -193,6 +229,17 @@ export class DocumentService {
     const documents = await this.documentModel.find({ _id: { $in: documentIds } });
     return documents;
   }
+
+  async findDocumentByName(documentName: string): Promise<Document[]> {
+    const foundDocuments = await this.documentModel.find({ name: documentName });
+
+    if (foundDocuments.length === 0) {
+        throw new NotFoundException(`No documents found with name ${documentName}`);
+    }
+
+    return foundDocuments;
+}
+  
 
   async getDocumentsByWorkspaceName(workspaceName: string): Promise<Document[]> {
     const workspace = await this.workspaceModel.findOne({ name: workspaceName });

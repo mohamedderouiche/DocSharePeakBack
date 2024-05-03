@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Delete, Param, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Delete, Param, Put, NotFoundException } from '@nestjs/common';
 import { Event } from './event.schemas';
 import { EventsService } from './events.service';
 
@@ -11,9 +11,9 @@ export class EventsController {
     return this.eventsService.findAll();
   }
 
-  @Post()
-  async create(@Body() event: Event): Promise<Event> {
-    return this.eventsService.create(event);
+  @Post(':emailUser')
+  async create(@Body() event: Event, @Param('emailUser') emailUser: string ): Promise<Event> {
+    return this.eventsService.create(event,emailUser);
   }
 
   @Put(':id') // Ajout de la méthode pour mettre à jour un événement
@@ -35,4 +35,14 @@ export class EventsController {
       throw new Error(`Error deleting event: ${error.message}`);
     }
   }
+
+  @Get('/getbyuseremail/:emailUser')
+async getEventsByUserId(@Param('emailUser') emailUser: string): Promise<Event[]> {
+  try {
+    const events: Event[] = await this.eventsService.getEventsByUserEmail(emailUser);
+    return events;
+  } catch (error) {
+    throw new NotFoundException(error.message);
+  }
+}
 }

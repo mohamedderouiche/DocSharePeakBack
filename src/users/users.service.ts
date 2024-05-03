@@ -14,6 +14,8 @@ import { LessThan } from 'typeorm';
 import * as nodemailer from 'nodemailer';
 import { JwtService } from '@nestjs/jwt';
 
+import { unlinkSync } from 'fs';
+
 @Injectable()
 export class UsersService {
   [x: string]: any;
@@ -93,7 +95,23 @@ async updatePasswordOldNew(email: string, newPassword: string, oldPassword: stri
     return this.userRepository.findOneAndUpdate(query, update, options)
   }
 
-  async addWorkspaceToUserRole(userEmail: string, workspaceName: string): Promise<User> {
+
+
+
+  async addRoleToDocument(userEmail: string,name:String){
+    const user = await this.userModel.findOne({ email: userEmail });
+    if (!user) {
+      throw new Error('User not found');
+    }
+  
+      user.role.push("AdminDocument"+name)
+
+    
+
+    return await user.save();
+  }
+
+  async addWorkspaceToUserRole(userEmail: string, workspaceName: string,isAdmin:boolean,isAdminDocument:boolean): Promise<User> {
     const user = await this.userModel.findOne({ email: userEmail });
     if (!user) {
       throw new Error('User not found');
@@ -106,12 +124,17 @@ async updatePasswordOldNew(email: string, newPassword: string, oldPassword: stri
 
     if (!user.role.includes(workspaceName)) {
       user.role.push(workspaceName);
+      if(isAdmin){
+        user.role.push("Admin"+workspaceName)
+      }
+     
       await this.sendEmail(
         userEmail,
         workspaceName,
         
       );
     } 
+   
     
     else {
       throw new Error('Workspace already added to user role');
@@ -257,5 +280,23 @@ async updatePasswordOldNew(email: string, newPassword: string, oldPassword: stri
     //     throw new Error(`Erreur lors de la suppression des utilisateurs non vérifiés : ${error.message}`);
     //   }
     // }
-    
-  }    
+
+    async updateProfileImage(userId: string, image: Express.Multer.File): Promise<User> {
+      const user = await this.userModel.findById(userId);
+  
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+  
+      let imageUrl: string | undefined;
+      if (image) {
+        if (user.image) {
+          unlinkSync(user.image);
+        }
+        imageUrl = image.path;
+        await this.userModel.updateOne({ _id: userId }, { image: imageUrl });
+      }
+  
+      return await this.userModel.findById(userId);
+    }
+  }  

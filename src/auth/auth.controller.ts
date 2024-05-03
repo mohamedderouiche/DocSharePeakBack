@@ -59,13 +59,24 @@ export class AuthController {
   }
 
 
-
- 
   @Post('/register')
   @HttpCode(HttpStatus.CREATED)
   @UseInterceptors(FileInterceptor('image')) // Interceptor for handling file upload
   async register(@Body() dto: AuthDto, @UploadedFile() image: Express.Multer.File): Promise<string> {
     return await this.authService.register(dto, image);
+  }
+ 
+  @Put(':id/image')
+  @UseInterceptors(FileInterceptor('image'))
+  async updateProfileImage(
+    @Param('id') userId: string,
+    @UploadedFile() image: Express.Multer.File
+  ): Promise<any> {
+    const user = await this.authService.updateProfileImage(userId, image);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return { message: 'Profile image updated successfully', user };
   }
 
 
@@ -77,16 +88,11 @@ export class AuthController {
   //   return await this.authService.logout(userId);
   // }
 
-  @Public()
-  @UseGuards(RtGuard)
-  @Post('/refresh')
-  @HttpCode(HttpStatus.OK)
-  async refreshTokens(
-    @GetCurrentUser('refreshToken') refreshToken: string,
-    @GetCurrentUserId() userId: string,
-  ) {
+ 
+  @Post('/refresh/:userId')
+  async refreshTokens(@Param('userId') userId: string, @Body('refreshToken') refreshToken: string) {
     return await this.authService.refreshTokens(userId, refreshToken);
-  }
+  } 
 
   @Get('profile')
   async profile(@GetCurrentUserId() userId: string) {
@@ -201,4 +207,8 @@ async checkPassword(@Body() body: { plainPassword: string, hashedPassword: strin
     throw new BadRequestException('Erreur lors de la comparaison des mots de passe');
   }
 }
+
+
+
+
 }

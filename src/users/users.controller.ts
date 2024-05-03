@@ -9,13 +9,15 @@ import {
   Param,
   Patch,
   Post,
+  Res,
 } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { AuthDto } from './../auth/dto/auth.dto';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
-import { Put, Query } from '@nestjs/common/decorators';
+import { Put, Query, UploadedFile, UseInterceptors } from '@nestjs/common/decorators';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 
 @Controller({
@@ -72,16 +74,31 @@ export class UsersController {
         }
     }
     @Put('addWorkspaceToUserRole')
-  async addWorkspaceToUserRole(@Body() requestBody: { email: string, workspaceName: string }) {
-    const { email, workspaceName } = requestBody;
+  async addWorkspaceToUserRole(@Body() requestBody: { email: string, workspaceName: string,isAdmin:boolean,isAdminDocument:boolean }) {
+    const { email, workspaceName,isAdmin,isAdminDocument } = requestBody;
     try {
-      const updatedUser = await this.usersService.addWorkspaceToUserRole(email, workspaceName);
+      const updatedUser = await this.usersService.addWorkspaceToUserRole(email, workspaceName,isAdmin,isAdminDocument);
       return { success: true, user: updatedUser };
     } catch (error) {
       return { success: false, message: error.message };
     }
   }
 
+
+  @Put('addRoleToDocument')
+  async addRoleToDocument(@Body() requestBody: { email: string, name: string }){
+    const { email, name} = requestBody;
+    try{
+      const updatedUser=await this.usersService.addRoleToDocument(email,name)
+      return { success: true, user: updatedUser };
+
+    }
+catch(error){
+  console.log(error)
+  return { success: false, message: error.message };
+
+}
+  }
   @Put( 'removeWorkspaceFromUserRole/:userEmail/:workspaceName' )
   async removeWorkspaceFromUserRole(@Param('userEmail') userEmail: string, @Param('workspaceName')  workspaceName: string) {
  return this.usersService.DeleteWorkspaceFromUserRole( userEmail,workspaceName);
@@ -132,6 +149,30 @@ export class UsersController {
   //     return { success: false, message: 'Failed to activate account.' };
   //   }
   // }
+  @Put(':id/image')
+  @UseInterceptors(FileInterceptor('image'))
+  async updateProfileImage(
+    @Param('id') userId: string,
+    @UploadedFile() image: Express.Multer.File
+  ): Promise<any> {
+    const user = await this.usersService.updateProfileImage(userId, image);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return { message: 'Profile image updated successfully', user };
+  }
 
+  @Get(':userId')
+  async findById(@Param('userId') userId: string) {
+    try {
+      const user = await this.usersService.findById(userId);
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+      return user;
+    } catch (error) {
+      throw new InternalServerErrorException('Internal server error');
+    }
+  }
 }
  

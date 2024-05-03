@@ -2,10 +2,12 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateTaskDto } from '../Task/dto/CreateTask.dto';
-import { Task } from '../Task/Schemas/Task.schema';
+import { Task } from './schemas/task.schema';
 import { Event, EventDocument } from '../Events/event.schemas';
 import { Document } from 'src/Document/Schemas/Document.schemas';
 import { EmailService } from 'src/Email/email.service';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import { User } from 'src/users/schemas/user.schema';
 
 @Injectable()
 export class TaskService {
@@ -14,15 +16,17 @@ export class TaskService {
     @InjectModel(Event.name) private eventModel: Model<Event>,
     @InjectModel(Document.name) private readonly documentModel: Model<Document>,
     private readonly emailService: EmailService,
+    @InjectModel(User.name) private readonly userModel: Model<User>,
+
   ) {}
 
   async createTask(createTaskDto: CreateTaskDto, userEmail: string) {
     const newTask = new this.taskModel(createTaskDto);
     const task = await newTask.save();
-  
+
     // Vérifier si l'Event existe avant de le créer
     const eventExists = await this.eventModel.exists({ _id: task._id });
-  
+
     if (!eventExists) {
       const event = new this.eventModel({
         _id: task._id,
@@ -31,10 +35,18 @@ export class TaskService {
         end: createTaskDto.end,
         allDay: createTaskDto.allDay,
       });
-      await event.save();
+      
+      const createdEvent =  await event.save();
       await this.sendEmail(userEmail, createTaskDto.title);
-    }
+      const user = await this.userModel.findOne({ email: userEmail });
+      if (!user) {
+        throw new NotFoundException(`User email not found`);
+      }
   
+      user.events.push(createdEvent._id); // Ajoutez l'ID du fichier au tableau files
+      await user.save();
+    }
+
     // Associate Task with Document
     if (createTaskDto.documentId) {
       const document = await this.documentModel.findById(createTaskDto.documentId);
@@ -44,19 +56,56 @@ export class TaskService {
       document.tasks.push(task._id);
       await document.save();
     }
-  
-   // Send email only if the end date is exactly one day after the current date
-const endDate = new Date(createTaskDto.end);
-const currentDate = new Date();
-const oneDay = 24 * 60 * 60 * 1000; // One day in milliseconds
-const differenceInDays = Math.floor((endDate.getTime() - currentDate.getTime()) / oneDay);
-if (differenceInDays === 1) {
-  await this.sendEmailOneDayBefore(userEmail, createTaskDto.title, endDate);
-}
-  
+
     return task;
   }
-  
+
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  async sendReminderEmails(userEmail: string) {
+    const currentDate = new Date();
+    const tasks = await this.taskModel.find();
+
+    for (const task of tasks) {
+      const endDate = new Date(task.end);
+      const differenceInDays = Math.ceil((endDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24));
+
+      if (differenceInDays === 1) {
+        await this.sendEmailOneDayBefore(userEmail, task.title, endDate);
+      }
+    }
+  }
+
+  async sendEmail(userEmail: string, taskTitle: string) {
+    const mailOptions = {
+      from: 'docsharepeak@gmail.com',
+      to: userEmail,
+      subject: 'Added task ' + taskTitle,
+      html: this.emailService.exportMail("A new task has been added ", "http://localhost:3000/Calendar"),
+    };
+
+    try {
+      const info = await this.emailService.sendMailtoStudent(userEmail, mailOptions.from, mailOptions.subject, mailOptions.html);
+      console.log('Email sent: ' + userEmail);
+    } catch (error) {
+      console.error('Error sending email:', error);
+    }
+  }
+
+  async sendEmailOneDayBefore(userEmail: string, taskTitle: string, endDate: Date) {
+    const mailOptions = {
+      from: 'docsharepeak@gmail.com',
+      to: userEmail,
+      subject: 'Reminder: Task Deadline Tomorrow',
+      html: `Your task "${taskTitle}" is due tomorrow. Please make sure to complete it on time.`,
+    };
+
+    try {
+      const info = await this.emailService.sendMailtoStudent(userEmail, mailOptions.from, mailOptions.subject, mailOptions.html);
+      console.log('Reminder email sent: ' + userEmail);
+    } catch (error) {
+      console.error('Error sending reminder email:', error);
+    }
+  }
 
   async getTasks() {
     return this.taskModel.find();
@@ -112,36 +161,5 @@ if (differenceInDays === 1) {
     const fullTasks = await this.getTasksByIds(tasksIds);
 
     return fullTasks;
-  }
-  async sendEmail(userEmail: string, taskTitle: string) {
-      
-    const mailOptions = {
-      from: 'docsharepeak@gmail.com',
-      to: userEmail,
-      subject: 'Added task ' + taskTitle,
-      html: this.emailService.exportMail("A new task has been added ","http://localhost:3000/Calendar"),
-    };
-
-    try {
-      const info = await this.emailService.sendMailtoStudent(userEmail,mailOptions.from, mailOptions.subject, mailOptions.html);
-      console.log('Email sent: ' + userEmail);
-    } catch (error) {
-      console.error('Error sending email:', error);
-    }
-  }
-  async sendEmailOneDayBefore(userEmail: string, taskTitle: string, endDate: Date) {
-    const mailOptions = {
-      from: 'docsharepeak@gmail.com',
-      to: userEmail,
-      subject: 'Reminder: Task Deadline Tomorrow',
-      html: `Your task "${taskTitle}" is due tomorrow. Please make sure to complete it on time.`,
-    };
-
-    try {
-      const info = await this.emailService.sendMailtoStudent(userEmail, mailOptions.from, mailOptions.subject, mailOptions.html);
-      console.log('Reminder email sent: ' + userEmail);
-    } catch (error) {
-      console.error('Error sending reminder email:', error);
-    }
   }
 }

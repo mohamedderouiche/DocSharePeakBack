@@ -19,23 +19,26 @@ import { Tokens } from './../types';
 import { AuthDto } from './dto/auth.dto';
 import * as nodemailer from 'nodemailer';
 import * as fs from 'fs';
-
+import { unlinkSync } from 'fs';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import * as multer from 'multer';
 // import { Multer } from 'multer';
 import { Stream } from 'stream';
 import * as BufferList from 'bl';
-
+import { Model } from 'mongoose';
 import * as speakeasy from 'speakeasy';
 import * as QRCode from 'qrcode';
 import { EmailService } from 'src/Email/email.service';
+import { User } from 'src/users/schemas/user.schema';
+import { UserRepository } from 'src/users/repository/user.repostory';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userService: UsersService,
     private readonly emailService: EmailService,
+    private readonly userRepository: UserRepository,
     private jwtService: JwtService,
   ) {}
 
@@ -163,8 +166,8 @@ async login(dto: AuthDto, token: string): Promise<Tokens> {
     }
     let imageUrl: string | undefined;
     if (image) {
-        imageUrl = image.path; // Assuming 'path' contains the URL or path of the uploaded image
-        console.log('Image uploaded:', imageUrl);
+      imageUrl = image.path; // Utilisez le champ 'path' pour obtenir le chemin de l'image
+      console.log('Image uploaded:', imageUrl);
     }
 
     const user: any = await this.userService.create({
@@ -187,6 +190,30 @@ async login(dto: AuthDto, token: string): Promise<Tokens> {
     return qrCodeDataUrl;
   }
   // **********************************************************
+  async updateProfileImage(userId: string, image: Express.Multer.File): Promise<User> {
+    const user = await this.userRepository.findById(userId);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    let imageUrl: string | undefined;
+    if (image) {
+      if (user.image) {
+        unlinkSync(user.image);
+      }
+      imageUrl = image.path;
+      await this.updateOne(userId, { image: imageUrl });
+    }
+
+    return await this.userRepository.findById(userId);
+  }
+
+  async updateOne(userId: string, data: any) {
+    await this.userRepository.updateOne( userId ,data );
+  }
+ 
+//  **********************************************************
   
   async sendQRCodeToUser(email: string, qrCodeDataUrl: string): Promise<void> {
     // Configurer le service de messagerie (vous pouvez utiliser Nodemailer ou tout autre service de messagerie de votre choix)
@@ -292,12 +319,6 @@ async login(dto: AuthDto, token: string): Promise<Tokens> {
   }
 
 
-  //*************************** */
-
-
-  
-
-
   // ***************************
 
   async validateUserPassword(userId: string, password: string): Promise<boolean> {
@@ -365,5 +386,8 @@ async login(dto: AuthDto, token: string): Promise<Tokens> {
       throw new Error('Erreur lors de la comparaison des mots de passe');
     }
   }
+
+ 
+}
   
- }
+ 

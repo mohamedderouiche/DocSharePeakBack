@@ -7,18 +7,17 @@ import { Post, EditorVersion, PostDocument } from './post.schema';
 export class EditorService {
   constructor(@InjectModel(Post.name) private readonly postModel: Model<PostDocument>) {}
 
-  async createPost(title: string, data: any): Promise<PostDocument> {
-    if (!data) {
-      throw new BadRequestException('Data is required');
+  async createPost(title: string, content: string): Promise<PostDocument> {
+    if (!content) {
+      throw new BadRequestException('Content is required');
     }
-  
-    const newPost = new this.postModel({ title, data, versionHistory: [] });
+
+    const newPost = new this.postModel({ title, data: { content }, versionHistory: [] });
     const savedPost = await newPost.save();
     return savedPost;
   }
-  
 
-  async updatePost(id: string, newData: any): Promise<PostDocument> {
+  async updatePost(id: string, newContent: string): Promise<PostDocument> {
     const post = await this.postModel.findById(id).exec();
     if (!post) {
       throw new NotFoundException('Post not found');
@@ -27,7 +26,7 @@ export class EditorService {
     const newVersion: EditorVersion = {
       versionNumber: post.versionHistory.length + 1,
       title: post.title,
-      data: newData,
+      data: { content: newContent },
       createdAt: new Date(),
     };
 

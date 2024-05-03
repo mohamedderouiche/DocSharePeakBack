@@ -14,6 +14,7 @@ import { WorkspaceModule } from './workspace/workspace.module';
 import { ChatGateway } from './chat/chat.gateway';
 import { EditorModule } from './editor/editor.module';
 import { TaskModule } from './Task/Task.module';
+import { RealTimeModule } from './realtimeNotif/realtime.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -29,6 +30,7 @@ import { TaskModule } from './Task/Task.module';
     FilesModule,
     WorkspaceModule,
     EditorModule,
+    RealTimeModule,
     MulterModule.register({
       dest: './documentFiles', // Destination folder for uploaded files
     }),

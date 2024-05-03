@@ -3,7 +3,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { EventsController } from './events.controller';
 import { EventsService } from './events.service';
 import { Event, EventSchema } from './event.schemas';
-import { Task, TaskSchema } from '../Task/Schemas/Task.schema';
+import { Task, TaskSchema } from '../Task/Schemas/task.schema';
+import { User, UserSchema } from 'src/users/schemas/user.schema';
 
 @Module({
   imports: [
@@ -14,6 +15,12 @@ import { Task, TaskSchema } from '../Task/Schemas/Task.schema';
               schema: EventSchema, 
         }
     ]),
+    MongooseModule.forFeature([
+      {
+           name: User.name,
+            schema: UserSchema, 
+      }
+  ]),
   ],
   controllers: [EventsController],
   providers: [EventsService],

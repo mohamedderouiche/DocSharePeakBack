@@ -8,7 +8,12 @@ export class EditorController {
 
   @Post()
   async create(@Body() createEditorDto: CreateEditorDto) {
-    return this.editorService.createPost(createEditorDto.title, createEditorDto.data);
+    return this.editorService.createPost(createEditorDto.title, createEditorDto.content);
+  }
+
+  @Put(':id')
+  async update(@Param('id') id: string, @Body() updateEditorDto: UpdateEditorDto) {
+    return this.editorService.updatePost(id, updateEditorDto.content);
   }
 
   @Get()
@@ -21,10 +26,6 @@ export class EditorController {
     return this.editorService.getPostById(id);
   }
 
-  @Put(':id')
-  async update(@Param('id') id: string, @Body() updateEditorDto: UpdateEditorDto) {
-    return this.editorService.updatePost(id, updateEditorDto.data);
-  }
 
   @Get(':id/history')
   async getVersionHistory(@Param('id') id: string) {

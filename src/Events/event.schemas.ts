@@ -18,4 +18,5 @@ export class Event {
   allDay: boolean;
 }
 
+
 export const EventSchema = SchemaFactory.createForClass(Event);

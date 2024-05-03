@@ -7,25 +7,23 @@ export interface EditorVersion {
   data: PostData;
   createdAt: Date;
 }
-export interface PostData {
-    time: number;
-    blocks: { id: string; type: string; data: { [key: string]: any } }[];
-    version: string;
-  }
-  
-  export type PostDocument = Post & Document;
-  
-  @Schema()
-  export class Post {
-    @Prop()
-    title: string;
-  
-    @Prop({ required: true, type: Object })
-    data: PostData; // Use the interface here
 
-    @Prop({ type: [Object] }) // Utiliser un tableau d'objets génériques
-  versionHistory: EditorVersion[]; 
-  }
-  
+export interface PostData {
+  content: string; // Assuming Quill content is stored as HTML string
+}
+
+export type PostDocument = Post & Document;
+
+@Schema()
+export class Post {
+  @Prop()
+  title: string;
+
+  @Prop({ required: true, type: Object })
+  data: PostData;
+
+  @Prop({ type: [Object] })
+  versionHistory: EditorVersion[];
+}
 
 export const PostSchema = SchemaFactory.createForClass(Post);

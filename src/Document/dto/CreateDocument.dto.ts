@@ -12,6 +12,5 @@ export class CreateDocumentDto {
 
   workspaceName : string;
 
-  // Ajouter le champ note dans CreateDocumentDto si nécessaire
   note?: string;
 }

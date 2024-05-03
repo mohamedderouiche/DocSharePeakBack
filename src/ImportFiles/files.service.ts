@@ -1,19 +1,27 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+/* eslint-disable prettier/prettier */
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { FileImport } from './file.schemas';
 import { Stream } from 'stream';
 import * as BufferList from 'bl';
 import { Document } from 'src/Document/Schemas/Document.schemas';
+import * as pdf from 'pdf-parse';
+import * as mammoth from 'mammoth';
+import { Client } from '@octoai/client';
+
 
 
 @Injectable()
 export class FilesService {
+  private client: Client;
   constructor(
     @InjectModel(FileImport.name) private FileModel: Model<FileImport>,
     @InjectModel(Document.name) private readonly documentModel: Model<Document>,
 
-  ) {}
+  ) {
+    this.client = new Client(process.env.OCTOAI_TOKEN);
+  }
 
   async saveFileToDatabase(file: Express.Multer.File,  documentId: string) {
     const bufferStream = new Stream.PassThrough();
@@ -44,6 +52,28 @@ export class FilesService {
 
     return savedFile._id;
   }
+
+
+  // async generateFileSummary(id: string): Promise<string> {
+  //   // Récupérer le contenu du fichier
+  //   const file = await this.getFileContent(id);
+    
+  //   // Convertir le contenu du fichier en texte (vous devrez adapter cette étape en fonction du type de fichier)
+  //   const fileText = file.toString('utf-8');
+
+  //   try {
+  //       // Appeler OctoAI pour générer le résumé en utilisant le modèle "mistral-7b-instruct"
+  //       const summary = await this.client.generateSummary(fileText, { model: "mistral-7b-instruct" });
+        
+  //       // Retourner le résumé généré
+  //       return summary;
+  //   } catch (error) {
+  //       // Gérer les erreurs éventuelles de l'appel à OctoAI
+  //       throw new Error('Failed to generate summary: ' + error.message);
+  //   }
+  // }
+
+
 
   async getFileContent(id: string): Promise<Buffer> {
     const file = await this.FileModel.findById(id);

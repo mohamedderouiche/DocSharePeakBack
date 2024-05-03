@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Controller, Get, Post, Delete, Param, UseInterceptors, UploadedFile, Res, Body, NotFoundException } from '@nestjs/common';
 import { FilesService } from './files.service';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -27,6 +28,16 @@ export class FilesController {
       throw error; // Retourne l'erreur d'origine pour un meilleur débogage
     }
   }
+
+  // @Get(':id/summary')
+  // async getFileSummary(@Param('id') fileId: string): Promise<string> {
+  //   try {
+  //     const summary = await this.filesService.generateFileSummary(fileId);
+  //     return summary;
+  //   } catch (error) {
+  //     throw new NotFoundException('Failed to generate summary: ' + error.message);
+  //   }
+  // }
 
   @Delete('delete/:id')
   async remove(@Param('id') id: string) {
