@@ -16,10 +16,19 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { CreateDocumentDto } from './dto/CreateDocument.dto';
-import { UpdateDocumentDto } from './dto/updateDocument.dto';
 import { DocumentService } from './documents.service';
 import { Response } from 'express';
 import { Document } from './Schemas/Document.schemas';
+
+export class UpdateDocumentDto {
+  
+  name?: string;
+
+  
+  title?: string;
+
+  note?: string;
+}
 
 @Controller('documents')
 export class DocumentController {

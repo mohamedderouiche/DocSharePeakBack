@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateTaskDto } from '../Task/dto/CreateTask.dto';
-import { Task } from './schemas/task.schema';
+import { Task } from 'src/Task/schemas/task.schema';
 import { Event, EventDocument } from '../Events/event.schemas';
 import { Document } from 'src/Document/Schemas/Document.schemas';
 import { EmailService } from 'src/Email/email.service';
