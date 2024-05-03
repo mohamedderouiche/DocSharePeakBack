@@ -4,7 +4,7 @@ import { TaskController } from '../Task/Task.controller';
 import { Task, TaskSchema } from '../Task/Schemas/Task.schema';
 import { Event, EventSchema } from '../Events/event.schemas'; 
 import { Document, DocumentSchema } from 'src/Document/Schemas/Document.schemas';
-import { TaskService } from './task.service';
+// import { TaskService } from './task.service';
 import { EmailService } from 'src/Email/email.service';
 import { User, UserSchema } from 'src/users/schemas/user.schema';
 
@@ -24,7 +24,7 @@ import { User, UserSchema } from 'src/users/schemas/user.schema';
 
   ],
   controllers: [TaskController],
-  providers: [TaskService,EmailService],
+  providers: [EmailService],
 
 })
 export class TaskModule {}
