@@ -2,12 +2,32 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateTaskDto } from '../Task/dto/CreateTask.dto';
-import { Task } from 'src/Task/schemas/task.schema';
 import { Event, EventDocument } from '../Events/event.schemas';
 import { Document } from 'src/Document/Schemas/Document.schemas';
 import { EmailService } from 'src/Email/email.service';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { User } from 'src/users/schemas/user.schema';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+
+@Schema()
+export class Task extends Event{
+    @Prop({ required: true })
+    title: string;
+
+    @Prop()
+    description: string;
+
+    @Prop()
+    status: string; // Can be 'todo', 'inProgress', 'done', etc.
+
+    @Prop({ type: Date, default: Date.now })
+    createdAt: Date;
+
+    @Prop({ type: Date, default: Date.now })
+    updatedAt: Date;
+}
+
+export const TaskSchema = SchemaFactory.createForClass(Task);
 
 @Injectable()
 export class TaskService {
