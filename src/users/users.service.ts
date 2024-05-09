@@ -175,7 +175,7 @@ async updatePasswordOldNew(email: string, newPassword: string, oldPassword: stri
       from: 'docsharepeak@gmail.com',
       to: userEmail,
       subject: 'Added To Workspace'+WorkspaceName ,  
-      html: this.emailService.exportMail("You Have been Added To "+WorkspaceName,"http://localhost:3000/"+WorkspaceName),
+      html: this.emailService.exportMail("You Have been Added To "+WorkspaceName,"https://reactprojectdeploy.vercel.app/"+WorkspaceName),
     };
 
     try {
@@ -218,8 +218,8 @@ async updatePasswordOldNew(email: string, newPassword: string, oldPassword: stri
       },
       to: email,
       subject: ' Account Confirmation',
-      // html: `<b><b>HI ${fullname} ? <a href="https://reactprojectdeploy.vercel.app/auth/activate/${token}">Activate Your Account</a></b>`,
-      html: `<b><b>HI ${fullname} ? <a href="http://localhost:3000/authentication/activation/${token}">Re-Activate Your Account</a></b>`
+      // html: `<b><b>HI ${fullname} ? <a href="http://localhost:3046/auth/activate/${token}">Activate Your Account</a></b>`,
+      html: `<b><b>HI ${fullname} ? <a href="https://reactprojectdeploy.vercel.app/authentication/activation/${token}">Re-Activate Your Account</a></b>`
     };
     
     try {

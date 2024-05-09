@@ -84,7 +84,7 @@ export class DocumentService {
   }
   
   generateDocumentLink(documentId: string): string {
-    const frontendUrl = 'http://localhost:3000';
+    const frontendUrl = 'https://reactprojectdeploy.vercel.app';
     return `${frontendUrl}/details/${documentId}`;
   }
 

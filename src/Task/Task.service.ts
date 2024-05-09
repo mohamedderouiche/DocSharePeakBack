@@ -100,7 +100,7 @@ export class TaskService {
       from: 'docsharepeak@gmail.com',
       to: userEmail,
       subject: 'Added task ' + taskTitle,
-      html: this.emailService.exportMail("A new task has been added ", "http://localhost:3000/Calendar"),
+      html: this.emailService.exportMail("A new task has been added ", "https://reactprojectdeploy.vercel.app/Calendar"),
     };
 
     try {
