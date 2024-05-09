@@ -1,28 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
+import { CreateDocumentDto } from './dto/createDocument.dto';
+import { UpdateDocumentDto } from './dto/updateDocument.dto';
 import { Document, DocumentVersion } from './Schemas/Document.schemas';
 import { EditorService } from '../editor/editor.service';
 import { Workspace } from '../workspace/workspace.schema';
 import { EmailService } from '../Email/email.service';
 import { RealTimeGateway } from 'src/realtimeNotif/realtime.gateway';
-import { IsNotEmpty } from 'class-validator';
-
-
-export class CreateDocumentDto {
-  @IsNotEmpty()
-  name: string;
-
-  @IsNotEmpty()
-  title: string;
-
-  @IsNotEmpty()
-  userEmail: string;
-
-  workspaceName : string;
-
-  note?: string;
-}
 
 @Injectable()
 export class DocumentService {
@@ -37,13 +22,13 @@ export class DocumentService {
     private readonly realTimeGateway: RealTimeGateway
 
   ) {
-    this.transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: 'docsharepeak@gmail.com',
-        pass: 'idfn awit axno nbae',
-      },
-    });
+    // this.transporter = nodemailer.createTransport({
+    //   service: 'gmail',
+    //   auth: {
+    //     user: 'docsharepeak@gmail.com',
+    //     pass: 'idfn awit axno nbae',
+    //   },
+    // });
   }
 
   // async sendEmail(userEmail: string, documentName: string, documentId: Types.ObjectId) {
@@ -84,7 +69,7 @@ export class DocumentService {
   }
   
   generateDocumentLink(documentId: string): string {
-    const frontendUrl = 'https://reactprojectdeploy.vercel.app';
+    const frontendUrl = 'https://reactprojectdeploy.vercel.app/';
     return `${frontendUrl}/details/${documentId}`;
   }
 
@@ -270,15 +255,4 @@ export class DocumentService {
   
     return fullDocuments;
   }
-
-  
-}
-export class UpdateDocumentDto {
-  
-  name?: string;
-
-  
-  title?: string;
-
-  note?: string;
 }
