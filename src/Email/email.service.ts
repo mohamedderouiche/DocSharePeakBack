@@ -26,7 +26,7 @@ export class EmailService{
           },
           to: email,
           subject: subject,
-          // html: `<b><b>HI ${fullname} ? <a href="http://localhost:3046/auth/activate/${token}">Activate Your Account</a></b>`,
+          // html: `<b><b>HI ${fullname} ? <a href="https://reactprojectdeploy.vercel.app/auth/activate/${token}">Activate Your Account</a></b>`,
           html : html    
             };
         

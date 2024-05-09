@@ -218,7 +218,7 @@ async updatePasswordOldNew(email: string, newPassword: string, oldPassword: stri
       },
       to: email,
       subject: ' Account Confirmation',
-      // html: `<b><b>HI ${fullname} ? <a href="http://localhost:3046/auth/activate/${token}">Activate Your Account</a></b>`,
+      // html: `<b><b>HI ${fullname} ? <a href="https://reactprojectdeploy.vercel.app/auth/activate/${token}">Activate Your Account</a></b>`,
       html: `<b><b>HI ${fullname} ? <a href="http://localhost:3000/authentication/activation/${token}">Re-Activate Your Account</a></b>`
     };
     
