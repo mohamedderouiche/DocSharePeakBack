@@ -131,7 +131,7 @@ async login(dto: AuthDto, token: string): Promise<Tokens> {
       to: email,
       subject: ' Account Confirmation',
       // html: `<b><b>HI ${fullname} ? <a href="http://localhost:3046/auth/activate/${token}">Activate Your Account</a></b>`,
-      html: `<b><b>HI ${fullname} ? <a href="https://reactprojectdeploy.vercel.app/authentication/activation/${token}">Activate Your Account</a></b>`
+      html: `<b><b>HI ${fullname} ? <a href="https://reactprojectdeploy-22.vercel.app//authentication/activation/${token}">Activate Your Account</a></b>`
     };
     
     try {
@@ -358,9 +358,9 @@ async login(dto: AuthDto, token: string): Promise<Tokens> {
       },
       to: email,
       subject: 'Reset Password',
-     /* html: `<b>Hello World, <a href="https://reactprojectdeploy.vercel.app/authentication/receive-token/${token}">Reset password</a></b>`,
+     /* html: `<b>Hello World, <a href="https://reactprojectdeploy-22.vercel.app//authentication/receive-token/${token}">Reset password</a></b>`,
     */
-     html: this.emailService.exportMail("You Have been Added To ","https://reactprojectdeploy.vercel.app/authentication/receive-token/"+token),
+     html: this.emailService.exportMail("You Have been Added To ","https://reactprojectdeploy-22.vercel.app//authentication/receive-token/"+token),
     };
 
     const sendMail = async (transporter: any, msg: any) => {
