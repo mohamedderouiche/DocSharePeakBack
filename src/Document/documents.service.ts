@@ -37,13 +37,13 @@ export class DocumentService {
     private readonly realTimeGateway: RealTimeGateway
 
   ) {
-    // this.transporter = nodemailer.createTransport({
-    //   service: 'gmail',
-    //   auth: {
-    //     user: 'docsharepeak@gmail.com',
-    //     pass: 'idfn awit axno nbae',
-    //   },
-    // });
+    this.transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'docsharepeak@gmail.com',
+        pass: 'idfn awit axno nbae',
+      },
+    });
   }
 
   // async sendEmail(userEmail: string, documentName: string, documentId: Types.ObjectId) {

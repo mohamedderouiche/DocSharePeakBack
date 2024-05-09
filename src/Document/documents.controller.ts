@@ -33,74 +33,74 @@ export class UpdateDocumentDto {
 @Controller('documents')
 export class DocumentController {
   
-//   constructor(private readonly documentService: DocumentService) {}
+  constructor(private readonly documentService: DocumentService) {}
 
-//   @Post('create')
-//   @UsePipes(new ValidationPipe())
-//   async create(@Body() createDocumentDto: CreateDocumentDto) {
-//     const newDocument = await this.documentService.createDocument(createDocumentDto);
+  @Post('create')
+  @UsePipes(new ValidationPipe())
+  async create(@Body() createDocumentDto: CreateDocumentDto) {
+    const newDocument = await this.documentService.createDocument(createDocumentDto);
 
-//     return newDocument;
-//   }
+    return newDocument;
+  }
   
-//   @Get('getAll')
-//   async findAll() {
-//     return this.documentService.getDocuments();
-//   }
+  @Get('getAll')
+  async findAll() {
+    return this.documentService.getDocuments();
+  }
 
-//   @Get('getById/:id')
-//   async findOne(@Param('id') id: string) {
-//     return this.documentService.getDocumentById(id);
-//   }
+  @Get('getById/:id')
+  async findOne(@Param('id') id: string) {
+    return this.documentService.getDocumentById(id);
+  }
 
-//   @Put('update/:id')
-//   async update(@Param('id') id: string, @Body() updateDocumentDto: UpdateDocumentDto) {
-//     return this.documentService.updateDocument(id, updateDocumentDto);
-//   }
+  @Put('update/:id')
+  async update(@Param('id') id: string, @Body() updateDocumentDto: UpdateDocumentDto) {
+    return this.documentService.updateDocument(id, updateDocumentDto);
+  }
 
-//   @Delete('delete/:id')
-//   async remove(@Param('id') id: string) {
-//     return this.documentService.deleteDocumentById(id);
-//   }
+  @Delete('delete/:id')
+  async remove(@Param('id') id: string) {
+    return this.documentService.deleteDocumentById(id);
+  }
 
 
-// @Get('download/:id')
-// async downloadFile(@Param('id') id: string, @Res() res: Response) {
-//   const fileContent = await this.documentService.getFileContent(id);
+@Get('download/:id')
+async downloadFile(@Param('id') id: string, @Res() res: Response) {
+  const fileContent = await this.documentService.getFileContent(id);
 
-//   res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.presentationml.slideshow');
-//   res.setHeader('Content-Disposition', 'attachment; filename=document.pptx');
+  res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.presentationml.slideshow');
+  res.setHeader('Content-Disposition', 'attachment; filename=document.pptx');
 
-//   res.send(fileContent);
-// }
+  res.send(fileContent);
+}
 
-// @Delete('cleanVersions/:id')
-// async cleanVersions(@Param('id') id: string, @Body('option') option: string, @Body('versionsToDelete') versionsToDelete: number[]) {
-//   const cleanedDocument = await this.documentService.cleanVersions(id, option, versionsToDelete);
-//   return cleanedDocument;
-// }
+@Delete('cleanVersions/:id')
+async cleanVersions(@Param('id') id: string, @Body('option') option: string, @Body('versionsToDelete') versionsToDelete: number[]) {
+  const cleanedDocument = await this.documentService.cleanVersions(id, option, versionsToDelete);
+  return cleanedDocument;
+}
 
-// @Get('/:workspaceName')
-// async getDocumentsByWorkspaceName(@Param('workspaceName') workspaceName: string): Promise<Document[]> {
-//   try {
-//     const documents: Document[] = await this.documentService.getDocumentsByWorkspaceName(workspaceName);
-//     return documents;
-//   } catch (error) {
-//     throw new NotFoundException(error.message);
-//   }
-// }
-// @Get('/Search/:documentName')
-// async searchDocumentByName(@Param('documentName') documentName: string): Promise<Document[]> {
-//   try {
-//       const foundDocuments = await this.documentService.findDocumentByName(documentName);
-//       return foundDocuments;
-//   } catch (error) {
-//       if (error instanceof NotFoundException) {
-//           console.error(error.message);
-//           return [];
-//       }
-//       throw error;
-//   }
-// }
+@Get('/:workspaceName')
+async getDocumentsByWorkspaceName(@Param('workspaceName') workspaceName: string): Promise<Document[]> {
+  try {
+    const documents: Document[] = await this.documentService.getDocumentsByWorkspaceName(workspaceName);
+    return documents;
+  } catch (error) {
+    throw new NotFoundException(error.message);
+  }
+}
+@Get('/Search/:documentName')
+async searchDocumentByName(@Param('documentName') documentName: string): Promise<Document[]> {
+  try {
+      const foundDocuments = await this.documentService.findDocumentByName(documentName);
+      return foundDocuments;
+  } catch (error) {
+      if (error instanceof NotFoundException) {
+          console.error(error.message);
+          return [];
+      }
+      throw error;
+  }
+}
 
 }
